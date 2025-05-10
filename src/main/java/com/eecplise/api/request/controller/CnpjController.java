@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/cnpj")
 public class CnpjController {
 
+
     @Autowired
     private CnpjService cnpjService;
 
