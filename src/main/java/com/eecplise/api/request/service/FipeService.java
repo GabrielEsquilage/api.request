@@ -22,8 +22,8 @@ public class FipeService {
     private final TipoVeiculoRepository tipoVeiculoRepository;
 
     public FipeService(RestTemplate restTemplate,
-                   MarcaRepository marcaRepository,
-                   TipoVeiculoRepository tipoVeiculoRepository) {
+                       MarcaRepository marcaRepository,
+                       TipoVeiculoRepository tipoVeiculoRepository) {
         this.restTemplate = restTemplate;
         this.marcaRepository = marcaRepository;
         this.tipoVeiculoRepository = tipoVeiculoRepository;
@@ -32,19 +32,18 @@ public class FipeService {
     public void importarMarcasPorTipo(int tipoVeiculoId) {
         String url = String.format("https://api.invertexto.com/v1/fipe/brands/%d?token=%s", tipoVeiculoId, token);
         FipeMarcaDTO[] marcas = restTemplate.getForObject(url, FipeMarcaDTO[].class);
-    
+
         TipoVeiculo tipoVeiculo = tipoVeiculoRepository.findById(tipoVeiculoId)
-            .orElseThrow(() -> new RuntimeException("Tipo de veículo não encontrado: " + tipoVeiculoId));
-    
-            
-            Arrays.stream(marcas).forEach(dto -> {
-                if (marcaRepository.findByCodigoAndTipoId(dto.getCodigo(), tipoVeiculo.getId()).isEmpty()) {
+                .orElseThrow(() -> new RuntimeException("Tipo de veículo não encontrado: " + tipoVeiculoId));
+
+        Arrays.stream(marcas).forEach(dto -> {
+            if (marcaRepository.findByCodigoAndTipoVeiculo_Id(dto.getCodigo(), tipoVeiculo.getId()).isEmpty()) {
                 Marca marca = new Marca();
                 marca.setCodigo(dto.getCodigo());
                 marca.setNome(dto.getNome());
                 marca.setTipoVeiculo(tipoVeiculo);
                 marcaRepository.save(marca);
-            });
-        }
+            } // Fechamento correto do if
+        }); // Fechamento correto do forEach
     }
 }

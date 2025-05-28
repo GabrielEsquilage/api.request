@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/fipe")
+@RequestMapping("/api/fipe")
 public class FipeController {
 
     private final FipeService fipeService;
