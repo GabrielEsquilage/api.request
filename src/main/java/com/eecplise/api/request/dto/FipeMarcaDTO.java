@@ -1,11 +1,9 @@
 package com.eecplise.api.request.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 public class FipeMarcaDTO {
-    
+
     @JsonProperty("id")
     private String codigo;
 
@@ -18,7 +16,6 @@ public class FipeMarcaDTO {
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
-
     }
 
     public String getNome() {

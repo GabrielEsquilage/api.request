@@ -2,6 +2,7 @@ package com.eecplise.api.request.entity.fipe;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "marcas", schema = "fipe", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"codigo", "tipo_id"})

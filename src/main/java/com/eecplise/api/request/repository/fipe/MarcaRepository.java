@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface MarcaRepository extends JpaRepository<Marca, Long> {
-    Optional<Marca> findByCodigoAndTipoId(String codigo, Integer tipoId);
+    Optional<Marca> findByCodigoAndTipoVeiculo_Id(String codigo, Long idTipoVeiculo);
 }
