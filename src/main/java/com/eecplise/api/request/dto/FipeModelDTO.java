@@ -1,28 +1,17 @@
-package com.eecplise.api.request.entity.fipe;
+package com.eecplise.api.request.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Entity
-@Table(name = "models", schema = "fipe")
-public class Model {
+public class FipeModelDTO {
 
-    @Id
     private Long id;
 
-    @Column(name = "fipe_code", nullable = false)
+    @JsonProperty("fipe_code")
     private String fipeCode;
 
-    @Column(nullable = false)
     private String model;
 
-    @Column(nullable = false) 
     private String years;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "marca_id", nullable = false)
-    private Marca marca;
-
-    
 
     public Long getId() {
         return id;
@@ -54,13 +43,5 @@ public class Model {
 
     public void setYears(String years) {
         this.years = years;
-    }
-
-    public Marca getMarca() {
-        return marca;
-    }
-
-    public void setMarca(Marca marca) {
-        this.marca = marca;
     }
 }
