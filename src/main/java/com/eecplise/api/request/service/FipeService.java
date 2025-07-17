@@ -82,4 +82,12 @@ public class FipeService {
 
         modelRepository.saveAll(entities);
     }
+
+    public List<Model> listarModelosPorMarca(Long marcaId) {
+        Marca marca = marcaRepository.findById(marcaId)
+                .orElseThrow(() -> new RuntimeException("Marca não encontrada: " + marcaId));
+
+        return modelRepository.findByMarca(marca);
+    }
+
 }

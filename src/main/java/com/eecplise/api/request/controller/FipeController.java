@@ -1,18 +1,29 @@
 package com.eecplise.api.request.controller;
 
+import com.eecplise.api.request.entity.fipe.Marca;
+import com.eecplise.api.request.entity.fipe.Model;
+import com.eecplise.api.request.repository.fipe.MarcaRepository;
 import com.eecplise.api.request.service.FipeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/fipe")
 public class  FipeController {
 
     private final FipeService fipeService;
+    private final MarcaRepository marcaRepository;
 
-    public FipeController(FipeService fipeService) {
+    public FipeController(FipeService fipeService, MarcaRepository marcaRepository) {
         this.fipeService = fipeService;
+        this.marcaRepository = marcaRepository;
     }
+
 
     @GetMapping("/importar-marcas/{tipo}")
     public ResponseEntity<String> importarMarcas(@PathVariable("tipo") int tipo) {
@@ -23,6 +34,42 @@ public class  FipeController {
             return ResponseEntity.badRequest().body("Erro ao importar marcas: " + ex.getMessage());
         } catch (Exception ex) {
             return ResponseEntity.internalServerError().body("Erro interno ao importar marcas.");
+        }
+    }
+
+    @GetMapping("/marcas")
+    public ResponseEntity<List<Map<String, Object>>> listarMarcas() {
+        List<Marca> marcas = marcaRepository.findAll();
+        List<Map<String, Object>> resultado = marcas.stream().map(marca -> {
+            Map<String, Object> dados = new HashMap<>();
+            dados.put("id", marca.getId());
+            dados.put("codigo", marca.getCodigo());
+            dados.put("nome", marca.getNome());
+            return dados;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    @GetMapping("/importar-modelos/{marcaId}")
+    public ResponseEntity<String> importarModelos(@PathVariable Long marcaId) {
+        try {
+            fipeService.importarModelosPorMarca(marcaId);
+            return ResponseEntity.ok("Modelos importados com sucesso para a marca ID " + marcaId + ".");
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body("Erro ao importar modelos: " + ex.getMessage());
+        } catch (Exception ex) {
+            return ResponseEntity.internalServerError().body("Erro interno ao importar modelos.");
+        }
+    }
+
+    @GetMapping("/modelos/{marcaId}")
+    public ResponseEntity<?> listaModelosPOrMarca(@PathVariable Long marcaId){
+        try{
+            List<Model> modelos = fipeService.listarModelosPorMarca(marcaId);
+            return ResponseEntity.ok(modelos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Erro ao Buscar Modelos: " + e.getMessage());
         }
     }
 }
