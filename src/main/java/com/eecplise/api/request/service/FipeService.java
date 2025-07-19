@@ -8,6 +8,7 @@ import com.eecplise.api.request.entity.fipe.TipoVeiculo;
 import com.eecplise.api.request.repository.fipe.MarcaRepository;
 import com.eecplise.api.request.repository.fipe.ModelRepository;
 import com.eecplise.api.request.repository.fipe.TipoVeiculoRepository;
+import com.eecplise.api.request.dto.FipeAnosResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -83,11 +84,34 @@ public class FipeService {
         modelRepository.saveAll(entities);
     }
 
-    public List<Model> listarModelosPorMarca(Long marcaId) {
+    public FipeAnosResponseDTO consultarAnosEPrecosPorFipeCode(String fipeCode) {
+        String url = String.format("https://api.invertexto.com/v1/fipe/years/%s?token=%s", fipeCode, token);
+
+        ResponseEntity<FipeAnosResponseDTO> response = restTemplate.getForEntity(url, FipeAnosResponseDTO.class);
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new RuntimeException("Erro ao consultar anos e preços para o código FIPE: " + fipeCode);
+        }
+
+        return response.getBody();
+    }
+
+    public List<FipeModelDTO> listarModelosDTOsPorMarca(Long marcaId) {
         Marca marca = marcaRepository.findById(marcaId)
                 .orElseThrow(() -> new RuntimeException("Marca não encontrada: " + marcaId));
 
-        return modelRepository.findByMarca(marca);
+        List<Model> modelos = modelRepository.findByMarca(marca);
+
+        return modelos.stream()
+                .map(model -> {
+                    FipeModelDTO dto = new FipeModelDTO();
+                    dto.setId(model.getId());
+                    dto.setFipeCode(model.getFipeCode());
+                    dto.setModel(model.getModel());
+                    dto.setYears(model.getYears());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 }

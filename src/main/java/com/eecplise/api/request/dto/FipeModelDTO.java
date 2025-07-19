@@ -6,6 +6,7 @@ public class FipeModelDTO {
 
     private Long id;
 
+
     @JsonProperty("fipe_code")
     private String fipeCode;
 

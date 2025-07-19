@@ -1,7 +1,8 @@
 package com.eecplise.api.request.controller;
 
+import com.eecplise.api.request.dto.FipeAnosResponseDTO;
+import com.eecplise.api.request.dto.FipeModelDTO;
 import com.eecplise.api.request.entity.fipe.Marca;
-import com.eecplise.api.request.entity.fipe.Model;
 import com.eecplise.api.request.repository.fipe.MarcaRepository;
 import com.eecplise.api.request.service.FipeService;
 import org.springframework.http.ResponseEntity;
@@ -66,10 +67,20 @@ public class  FipeController {
     @GetMapping("/modelos/{marcaId}")
     public ResponseEntity<?> listaModelosPOrMarca(@PathVariable Long marcaId){
         try{
-            List<Model> modelos = fipeService.listarModelosPorMarca(marcaId);
+            List<FipeModelDTO> modelos = fipeService.listarModelosDTOsPorMarca(marcaId);
             return ResponseEntity.ok(modelos);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body("Erro ao Buscar Modelos: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/precos/{fipeCode}")
+    public ResponseEntity<?> consultarPrecosPorFipeCode(@PathVariable("fipeCode") String fipeCode) {
+        try {
+            FipeAnosResponseDTO response = fipeService.consultarAnosEPrecosPorFipeCode(fipeCode);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body("Erro ao consultar preços: " + ex.getMessage());
         }
     }
 }
