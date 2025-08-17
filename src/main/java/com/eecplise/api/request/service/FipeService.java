@@ -5,10 +5,13 @@ import com.eecplise.api.request.dto.FipeModelDTO;
 import com.eecplise.api.request.entity.fipe.Marca;
 import com.eecplise.api.request.entity.fipe.Model;
 import com.eecplise.api.request.entity.fipe.TipoVeiculo;
+import com.eecplise.api.request.mapper.FipeModelMapper;
 import com.eecplise.api.request.repository.fipe.MarcaRepository;
 import com.eecplise.api.request.repository.fipe.ModelRepository;
 import com.eecplise.api.request.repository.fipe.TipoVeiculoRepository;
 import com.eecplise.api.request.dto.FipeAnosResponseDTO;
+import com.eecplise.api.request.dto.FipeCodeResponseDTO;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,15 +31,18 @@ public class FipeService {
     private final MarcaRepository marcaRepository;
     private final TipoVeiculoRepository tipoVeiculoRepository;
     private final ModelRepository modelRepository;
+    private final FipeModelMapper fipeModelMapper;
 
     public FipeService(RestTemplate restTemplate,
                        MarcaRepository marcaRepository,
                        TipoVeiculoRepository tipoVeiculoRepository,
-                       ModelRepository modelRepository) {
+                       ModelRepository modelRepository,
+                       FipeModelMapper fipeModelMapper) {
         this.restTemplate = restTemplate;
         this.marcaRepository = marcaRepository;
         this.tipoVeiculoRepository = tipoVeiculoRepository;
         this.modelRepository = modelRepository;
+        this.fipeModelMapper = fipeModelMapper;
     }
 
     public void importarMarcasPorTipo(int tipoVeiculoId) {
@@ -112,6 +118,13 @@ public class FipeService {
                     return dto;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<FipeCodeResponseDTO> buscarModelosPorTermo(String termo) {
+       
+        List<Model> modelosEncontrados = modelRepository.findByModelContainingIgnoreCase(termo);
+        List<FipeCodeResponseDTO> dtos = fipeModelMapper.toDtoList(modelosEncontrados);
+        return dtos;
     }
 
 }

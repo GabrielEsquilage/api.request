@@ -35,7 +35,7 @@ public class Marca {
 
     public String getCodigo() {
         return codigo;
-
+ 
     }
 
     public void setCodigo(String codigo) {

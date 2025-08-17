@@ -1,6 +1,7 @@
 package com.eecplise.api.request.controller;
 
 import com.eecplise.api.request.dto.FipeAnosResponseDTO;
+import com.eecplise.api.request.dto.FipeCodeResponseDTO;
 import com.eecplise.api.request.dto.FipeModelDTO;
 import com.eecplise.api.request.entity.fipe.Marca;
 import com.eecplise.api.request.repository.fipe.MarcaRepository;
@@ -81,6 +82,21 @@ public class  FipeController {
             return ResponseEntity.ok(response);
         } catch (RuntimeException ex) {
             return ResponseEntity.badRequest().body("Erro ao consultar preços: " + ex.getMessage());
+        }
+    }
+
+    @GetMapping("/modelos/buscar")
+
+    public ResponseEntity<?> buscarModelosPorTermo(@RequestParam("termo") String termo) {
+        try {
+            List<FipeCodeResponseDTO> resultado = fipeService.buscarModelosPorTermo(termo);
+            if (resultado.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultado);
+        
+        } catch (Exception e) {
+             return ResponseEntity.internalServerError().body("Ocorreu um erro interno ao buscar os modelos.");
         }
     }
 }

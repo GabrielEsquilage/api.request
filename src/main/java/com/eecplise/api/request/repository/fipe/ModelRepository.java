@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Long> {
     List<Model> findByMarca(Marca marca);
+    List<Model> findByModelContainingIgnoreCase(String termo);
 
 }
